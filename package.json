@@ -1,0 +1,21 @@
+{
+  "name": "lange",
+  "version": "1.0.0",
+  "bin": {
+    "tran": "bin/tran"
+  },
+  "description": "方便翻译语言，不需要打开其他的程序！",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "EastLee",
+  "license": "ISC",
+  "dependencies": {
+    "cli-color": "1.2.0",
+    "commander": "2.12.2",
+    "encodeurl": "1.0.1",
+    "md5": "2.2.1",
+    "request": "2.83.0"
+  }
+}

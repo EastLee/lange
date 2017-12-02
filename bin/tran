@@ -1,0 +1,91 @@
+#! /usr/bin/env node
+
+var program = require('commander');
+var md5 = require('md5');
+var request = require('request');
+var encodeUrl = require('encodeurl');
+var color = require('cli-color');
+
+var appKey = '0e830613178baeba';
+var secretKey = 'NoJZObsSWUfj3UJohEitNgfbYRip96vx';
+
+var salt = Date.now();
+
+var CODE_ZH = {
+	'101': '缺少必填的参数，出现这个情况还可能是et的值和实际加密方式不对应',
+	'102': '不支持的语言类型',
+	'103': '翻译文本过长',
+	'104': '不支持的API类型',
+	'105': '不支持的签名类型',
+	'106': '不支持的响应类型',
+	'107': '不支持的传输加密类型',
+	'108': 'appKey无效，注册账号， 登录后台创建应用和实例并完成绑定， 可获得应用ID和密钥等信息，其中应用ID就是appKey（ 注意不是应用密钥）',
+	'109': 'batchLog格式不正确',
+	'110': '无相关服务的有效实例',
+	'111': '开发者账号无效，可能是账号为欠费状态',
+	'201': '解密失败，可能为DES,BASE64,URLDecode的错误',
+	'202': '签名检验失败',
+	'203': '访问IP地址不在可访问IP列表',
+	'301': '辞典查询失败',
+	'302': '翻译查询失败',
+	'303': '服务端的其它异常',
+	'401': '账户已经欠费停',
+	'0': '翻译成功',
+	'net': '请求失败，可能是网络问题'
+}
+
+program
+	.version('0.0.1')
+	.option('-q,--qest <q>', '要翻译的文本')
+	.option('-f,--from [from]', '源语言', 'zh-CHS')
+	.option('-t,--to [to]', '目标语言', 'EN')
+	.usage("[option]")
+
+program.on('--help',function(){
+	console.info(' ');
+	console.info(' ');
+	
+	console.info('互译语种：');
+	console.info('    zh-CHS(中文)|ja(日文)|EN(英文)|ko(韩文)|fr(法文)|ru(俄文)|pt(葡萄牙文)|es(西班牙文)');
+})
+
+program.parse(process.argv);
+
+if(!program.qest){
+	console.info(color.red('请输入需要翻译的内容！'));
+	process.exit(1);
+}
+
+request({
+	url: 'http://openapi.youdao.com/api',
+	qs: {
+		q: encodeUrl(program.qest),
+		from: program.from,
+		to: program.to,
+		appKey: appKey,
+		salt: salt,
+		sign: md5(appKey + program.qest + salt + secretKey)
+	}
+}, function(error, response, body) {
+
+	if (error || response.statusCode != 200) {
+		console.info(color.red(CODE_ZH['net']));
+	} else {
+		body = JSON.parse(body);
+		if (body.errorCode != 0) {
+			console.info("翻译失败：")
+			console.info("    " + color.red(CODE_ZH[body.errorCode]));
+			return;
+		}
+		body.translation && body.translation.length && console.info('翻译结果：', body.translation.join(', '));
+		body.basic && body.basic.explains && body.basic.explains.length && console.info('基本词典：', body.basic.explains.join(', '));
+		if (body.web && body.web.length) {
+			console.info('网络释义：');
+			var i = 0;
+			for (var obj of body.web) {
+				console.info('    ' + ++i + '、' + obj.value.join(', '));
+			}
+		}
+	}
+
+})
