@@ -1,14 +1,16 @@
 {
   "name": "lange",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "bin": {
     "tran": "bin/tran"
   },
   "description": "方便翻译语言，不需要打开其他的程序！",
+  "repository": "EastLee/lange",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords":["translate","cmd","js"],
   "author": "EastLee",
   "license": "ISC",
   "dependencies": {
