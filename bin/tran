@@ -37,8 +37,8 @@ var CODE_ZH = {
 program
 	.version('0.0.1')
 	.option('-q,--qest <q>', '要翻译的文本')
-	.option('-f,--from [from]', '源语言', 'zh-CHS')
-	.option('-t,--to [to]', '目标语言', 'EN')
+	.option('-f,--from [from]', '源语言', 'EN')
+	.option('-t,--to [to]', '目标语言', 'zh-CHS')
 	.usage("[option]")
 
 program.on('--help',function(){
